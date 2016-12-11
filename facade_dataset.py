@@ -28,11 +28,11 @@ class FacadeDataset(dataset_mixin.DatasetMixin):
             img = Image.open(dataDir+"/cmp_b%04d.jpg"%i)
             label = Image.open(dataDir+"/cmp_b%04d.png"%i)
             w,h = img.size
-            r = 286/min(w,h)
+            r = 286.0/min(w,h)
             # resize images so that min(w, h) == 286
             img = img.resize((int(r*w), int(r*h)), Image.BILINEAR)
             label = label.resize((int(r*w), int(r*h)), Image.NEAREST)
-            
+
             img = np.asarray(img).astype("f").transpose(2,0,1)/128.0-1.0
             label_ = np.asarray(label)-1  # [0, 12)
             label = np.zeros((12, img.shape[1], img.shape[2])).astype("i")
@@ -40,7 +40,7 @@ class FacadeDataset(dataset_mixin.DatasetMixin):
                 label[j,:] = label_==j
             self.dataset.append((img,label))
         print("load dataset done")
-    
+
     def __len__(self):
         return len(self.dataset)
 
@@ -52,4 +52,3 @@ class FacadeDataset(dataset_mixin.DatasetMixin):
         y_l = np.random.randint(0,h-crop_width)
         y_r = y_l+crop_width
         return self.dataset[i][1][:,y_l:y_r,x_l:x_r], self.dataset[i][0][:,y_l:y_r,x_l:x_r]
-    
